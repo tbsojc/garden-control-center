@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtuelle Python-Umgebung
+.venv/
+venv/
+
+# Entwicklungswerkzeuge
+.vscode/
+.idea/
+
+# Betriebssystem
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# SQLite temporäre Dateien
+*.db-shm
+*.db-wal
+*.db-journal
+
