@@ -1,0 +1,615 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<header class="page-header">
+
+            <div>
+
+                <h1>Aufgaben</h1>
+
+                <p>
+                    Gartenarbeiten planen und erledigen.
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <section class="two-column">
+
+
+            <!-- Aufgabenliste -->
+
+            <div>
+
+                <h2>Aufgabenliste</h2>
+
+
+                {% if tasks %}
+
+                <div class="area-list">
+
+                    {% for task in tasks %}
+
+                    <article
+                        class="area-card {% if task.completed %}task-completed{% endif %}"
+                    >
+
+                        <div class="area-info">
+
+                            <span class="area-type">
+                                {{ task.priority }}
+                            </span>
+
+
+                            <h3>
+                                {% if task.completed %}
+                                    ✓
+                                {% endif %}
+
+                                {{ task.title }}
+                            </h3>
+
+
+                            <!-- Ausführungsart -->
+
+                            {% if task.execution_type == "once" %}
+
+                                <p>
+                                    📌 Einmalig
+                                </p>
+
+                            {% elif task.execution_type == "recurring" %}
+
+                                <p>
+                                    🔁 Regelmäßig
+                                </p>
+
+                                <p>
+                                    Alle {{ task.interval_days }} Tage
+                                </p>
+
+                                <p>
+                                    📅 Saison:
+                                    Monat {{ task.start_month }}
+                                    –
+                                    {{ task.end_month }}
+                                </p>
+
+                            {% elif task.execution_type == "automation" %}
+
+                                <p>
+                                    ⚙ Automatisierung
+                                </p>
+
+                                <p class="muted-text">
+                                    Automatisierungsprogramm noch nicht eingerichtet.
+                                </p>
+
+                            {% endif %}
+
+
+                            <!-- Fälligkeit -->
+
+                            {% set next_due = task_due_dates.get(task.id) %}
+
+                            {% if next_due %}
+
+                                <p>
+                                    {% if task.execution_type == "recurring" %}
+                                        ⏭ Nächste Fälligkeit:
+                                    {% else %}
+                                        📅 Fällig:
+                                    {% endif %}
+
+                                    {{ next_due.strftime("%d.%m.%Y") }}
+                                </p>
+
+                            {% endif %}
+
+
+                            <!-- Fälligkeitsstatus -->
+
+                            {% set due_status = task_due_status.get(task.id) %}
+
+                            {% if due_status %}
+
+                                <div class="task-due-status {{ due_status.status }}">
+
+                                    {% if due_status.status == "overdue" %}
+                                        🔴
+                                    {% elif due_status.status == "today" %}
+                                        🟠
+                                    {% elif due_status.status == "tomorrow" %}
+                                        🟡
+                                    {% else %}
+                                        🟢
+                                    {% endif %}
+
+                                    {{ due_status.label }}
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- Letzte Erledigung bei regelmäßigen Aufgaben -->
+
+                            {% if task.execution_type == "recurring" %}
+
+                                <div class="task-last-completed">
+
+                                    {% if task.last_completed_at %}
+                                        Zuletzt erledigt:
+                                        {{ task.last_completed_at.strftime("%d.%m.%Y") }}
+                                    {% else %}
+                                        Noch nie erledigt
+                                    {% endif %}
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- Pflanze -->
+
+                            {% if task.plant %}
+
+                            <p>
+                                🌱 {{ task.plant.name }}
+
+                                {% if task.plant.variety %}
+                                    · {{ task.plant.variety }}
+                                {% endif %}
+                            </p>
+
+                            {% endif %}
+
+
+                            <!-- Gartenbereich -->
+
+                            {% if task.garden_area %}
+
+                            <p>
+                                📍 {{ task.garden_area.name }}
+                            </p>
+
+                            {% endif %}
+
+
+                            <!-- Beschreibung -->
+
+                            {% if task.description %}
+
+                            <p>
+                                {{ task.description }}
+                            </p>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="task-actions">
+
+                            <a
+                                href="/tasks/{{ task.id }}/edit"
+                                class="secondary-button"
+                            >
+                                Bearbeiten
+                            </a>
+
+
+                            {% if task.execution_type != "automation" %}
+
+                            <form
+                                method="post"
+                                action="/tasks/{{ task.id }}/toggle"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="secondary-button"
+                                >
+
+                                    {% if task.execution_type == "recurring" %}
+
+                                        ✓ Heute erledigt
+
+                                    {% elif task.completed %}
+
+                                        Wieder öffnen
+
+                                    {% else %}
+
+                                        ✓ Erledigt
+
+                                    {% endif %}
+
+                                </button>
+
+                            </form>
+
+                            {% endif %}
+
+
+                            <form
+                                method="post"
+                                action="/tasks/{{ task.id }}/delete"
+                                onsubmit="return confirm('Aufgabe wirklich löschen?');"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="danger-button"
+                                >
+                                    Löschen
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </article>
+
+                    {% endfor %}
+
+                </div>
+
+
+                {% else %}
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        ✓
+                    </div>
+
+                    <h3>
+                        Keine Aufgaben
+                    </h3>
+
+                    <p>
+                        Momentan sind keine Gartenarbeiten eingetragen.
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- Aufgabe hinzufügen -->
+
+            <div>
+
+                <div class="form-card">
+
+                    <h2>
+                        Aufgabe hinzufügen
+                    </h2>
+
+
+                    <form
+                        method="post"
+                        action="/tasks"
+                    >
+
+
+                        <!-- Aufgabe -->
+
+                        <label for="task_title">
+                            Aufgabe
+                        </label>
+
+                        <input
+                            id="task_title"
+                            name="title"
+                            type="text"
+                            placeholder="z. B. Erdbeeren düngen"
+                            required
+                        >
+
+
+                        <!-- Ausführungsart -->
+
+                        <label>
+                            Ausführung
+                        </label>
+
+
+                        <input
+                            type="hidden"
+                            id="execution_type"
+                            name="execution_type"
+                            value="once"
+                        >
+
+
+                        <div class="task-mode-selector">
+
+                            <button
+                                type="button"
+                                class="task-mode-button active"
+                                data-mode="once"
+                            >
+                                Einmalig
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="task-mode-button"
+                                data-mode="recurring"
+                            >
+                                Regelmäßig
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="task-mode-button"
+                                data-mode="automation"
+                            >
+                                ⚙ Automatisierung
+                            </button>
+
+                        </div>
+
+
+
+                        <!-- Einmalige Aufgabe -->
+
+                        <div id="task-once-fields">
+
+                            <label for="task_due_date">
+                                Fällig am
+                            </label>
+
+                            <input
+                                id="task_due_date"
+                                name="due_date"
+                                type="date"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <!-- Regelmäßige Aufgabe -->
+
+                        <div
+                            id="task-recurring-fields"
+                            style="display: none;"
+                        >
+
+                            <h3 class="form-section-title">
+                                Wiederholung
+                            </h3>
+
+
+                            <label for="interval_days">
+                                Intervall in Tagen
+                            </label>
+
+                            <input
+                                id="interval_days"
+                                name="interval_days"
+                                type="number"
+                                min="1"
+                                placeholder="z. B. 14"
+                            >
+
+
+                            <div class="form-row">
+
+                                <div>
+
+                                    <label for="start_month">
+                                        Von Monat
+                                    </label>
+
+                                    <input
+                                        id="start_month"
+                                        name="start_month"
+                                        type="number"
+                                        min="1"
+                                        max="12"
+                                        placeholder="1–12"
+                                    >
+
+                                </div>
+
+
+                                <div>
+
+                                    <label for="end_month">
+                                        Bis Monat
+                                    </label>
+
+                                    <input
+                                        id="end_month"
+                                        name="end_month"
+                                        type="number"
+                                        min="1"
+                                        max="12"
+                                        placeholder="1–12"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <p class="muted-text">
+                                Die Aufgabe wird jedes Jahr innerhalb
+                                dieses Monatszeitraums wiederholt.
+                            </p>
+
+                        </div>
+
+
+
+                        <!-- Automatisierung -->
+
+                        <div
+                            id="task-automation-fields"
+                            class="automation-placeholder"
+                            style="display: none;"
+                        >
+
+                            <strong>
+                                ⚙ Automatisierung
+                            </strong>
+
+                            <p>
+                                Automatisierungsprogramme werden später
+                                an dieser Stelle auswählbar.
+                            </p>
+
+                            <p class="muted-text">
+                                Zum Beispiel Bewässern, Pumpen
+                                oder Beleuchtung.
+                            </p>
+
+                        </div>
+
+
+
+                        <!-- Priorität -->
+
+                        <label for="task_priority">
+                            Priorität
+                        </label>
+
+                        <select
+                            id="task_priority"
+                            name="priority"
+                        >
+
+                            <option value="niedrig">
+                                Niedrig
+                            </option>
+
+                            <option
+                                value="normal"
+                                selected
+                            >
+                                Normal
+                            </option>
+
+                            <option value="hoch">
+                                Hoch
+                            </option>
+
+                        </select>
+
+
+
+                        <!-- Gartenbereich -->
+
+                        <label for="task_area">
+                            Gartenbereich
+                        </label>
+
+                        <select
+                            id="task_area"
+                            name="garden_area_id"
+                        >
+
+                            <option value="">
+                                Keine Zuordnung
+                            </option>
+
+                            {% for area in areas %}
+
+                            <option value="{{ area.id }}">
+                                {{ area.name }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+
+
+                        <!-- Pflanze -->
+
+                        <label for="task_plant">
+                            Pflanze
+                        </label>
+
+                        <select
+                            id="task_plant"
+                            name="plant_id"
+                        >
+
+                            <option value="">
+                                Keine Zuordnung
+                            </option>
+
+                            {% for plant in plants %}
+
+                            <option value="{{ plant.id }}">
+
+                                {{ plant.name }}
+
+                                {% if plant.variety %}
+                                    – {{ plant.variety }}
+                                {% endif %}
+
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+
+
+                        <!-- Beschreibung -->
+
+                        <label for="task_description">
+                            Beschreibung
+                        </label>
+
+                        <textarea
+                            id="task_description"
+                            name="description"
+                            rows="4"
+                            placeholder="Zusätzliche Hinweise ..."
+                        ></textarea>
+
+
+
+                        <button
+                            type="submit"
+                            class="primary-button"
+                        >
+                            + Aufgabe hinzufügen
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+
+
+
+        </section>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script src="{{ url_for('static', path='/js/tasks.js') }}"></script>
+
+{% endblock %}

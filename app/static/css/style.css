@@ -725,3 +725,123 @@ button {
     }
 
 }
+.area-plants {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ddd;
+}
+
+.area-plants h4 {
+    margin: 0 0 0.6rem 0;
+}
+
+.plant-list {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.plant-list li {
+    margin-bottom: 0.35rem;
+}
+
+.plant-next-task {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+}
+
+.plant-list-item {
+    margin-bottom: 1.25rem;
+}
+
+.plant-list-header {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.plant-task-list {
+    margin: 0;
+    padding-left: 1.4rem;
+}
+
+.plant-task {
+    margin-bottom: 0.4rem;
+}
+
+.plant-task-title {
+    margin-right: 0.6rem;
+}
+
+.task-due {
+    opacity: 0.7;
+    font-size: 0.9rem;
+}
+
+.task-today {
+    font-weight: 700;
+}
+
+.task-overdue {
+    font-weight: 700;
+}
+
+.muted-text {
+    opacity: 0.65;
+    font-size: 0.9rem;
+}
+.task-mode-selector {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.task-mode-button {
+    padding: 0.7rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font: inherit;
+}
+
+.task-mode-button.active {
+    font-weight: 700;
+    border-width: 2px;
+}
+
+.automation-placeholder {
+    margin: 0.5rem 0 1.2rem;
+    padding: 1rem;
+    border: 1px dashed #aaa;
+    border-radius: 10px;
+}
+
+.task-due-status {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.task-due-status.overdue {
+    font-weight: 700;
+}
+
+.task-due-status.today {
+    font-weight: 700;
+}
+
+.task-due-status.tomorrow {
+    font-weight: 600;
+}
+
+.task-due-status.upcoming {
+    font-weight: 500;
+}
+
+.task-last-completed {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    opacity: 0.7;
+}

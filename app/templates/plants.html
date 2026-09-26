@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<header class="page-header">
+
+            <div>
+                <h1>Pflanzen</h1>
+
+                <p>
+                    Verwalte die Pflanzen in deinem Garten.
+                </p>
+            </div>
+
+        </header>
+
+
+        <section class="two-column">
+
+
+            <!-- Pflanzenliste -->
+
+            <div>
+
+                <h2>Meine Pflanzen</h2>
+
+
+                {% if plants %}
+
+                <div class="area-list">
+
+                    {% for plant in plants %}
+
+                    <article class="area-card">
+
+                        <div class="area-info">
+
+                            <span class="area-type">
+                                {{ plant.garden_area.name }}
+                            </span>
+
+
+                            <h3>
+                                {{ plant.name }}
+
+                                {% if plant.variety %}
+                                    · {{ plant.variety }}
+                                {% endif %}
+                            </h3>
+
+                            {% if plant.species %}
+
+                            <p>
+                                📚 Pflanzenwissen:
+                                {{ plant.species.name }}
+                            </p>
+
+                            {% endif %}
+
+                            <p>
+                                Anzahl: {{ plant.quantity }}
+                            </p>
+
+
+                            {% if plant.planted_at %}
+
+                            <p>
+                                Gepflanzt:
+                                {{ plant.planted_at.strftime('%d.%m.%Y') }}
+                            </p>
+
+                            {% endif %}
+
+
+                            {% if plant.notes %}
+
+                            <p>
+                                {{ plant.notes }}
+                            </p>
+
+                            {% endif %}
+
+                        </div>
+
+                        <a
+                            href="/plants/{{ plant.id }}/analysis"
+                            class="secondary-button"
+                        >
+                            Standort prüfen
+                        </a>
+
+                        <form
+                            method="post"
+                            action="/plants/{{ plant.id }}/delete"
+                            onsubmit="return confirm('Pflanze wirklich löschen?');"
+                        >
+
+                            <button
+                                type="submit"
+                                class="danger-button"
+                            >
+                                Löschen
+                            </button>
+
+                        </form>
+
+                    </article>
+
+                    {% endfor %}
+
+                </div>
+
+
+                {% else %}
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        🌿
+                    </div>
+
+                    <h3>
+                        Noch keine Pflanzen
+                    </h3>
+
+                    <p>
+                        Lege deine erste Pflanze an.
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- Pflanze hinzufügen -->
+
+            <div>
+
+                <div class="form-card">
+
+                    <h2>
+                        Pflanze hinzufügen
+                    </h2>
+
+
+                    {% if areas %}
+
+                    <form
+                        method="post"
+                        action="/plants"
+                    >
+
+                        <label for="name">
+                            Pflanzenart
+                        </label>
+
+                        <input
+                            id="name"
+                            name="name"
+                            type="text"
+                            placeholder="z. B. Tomate"
+                            required
+                        >
+
+                        <label for="species_id">
+                            Pflanzenwissen
+                        </label>
+
+                        <select
+                            id="species_id"
+                            name="species_id"
+                        >
+
+                            <option value="">
+                                Keine Zuordnung
+                            </option>
+
+                            {% for item in species %}
+
+                            <option value="{{ item.id }}">
+                                {{ item.name }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                        <label for="variety">
+                            Sorte
+                        </label>
+
+                        <input
+                            id="variety"
+                            name="variety"
+                            type="text"
+                            placeholder="z. B. Sungold"
+                        >
+
+
+                        <label for="garden_area_id">
+                            Gartenbereich
+                        </label>
+
+                        <select
+                            id="garden_area_id"
+                            name="garden_area_id"
+                            required
+                        >
+
+                            {% for area in areas %}
+
+                            <option value="{{ area.id }}">
+                                {{ area.name }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+
+                        <label for="quantity">
+                            Anzahl
+                        </label>
+
+                        <input
+                            id="quantity"
+                            name="quantity"
+                            type="number"
+                            value="1"
+                            min="1"
+                            required
+                        >
+
+
+                        <label for="planted_at">
+                            Pflanzdatum
+                        </label>
+
+                        <input
+                            id="planted_at"
+                            name="planted_at"
+                            type="date"
+                        >
+
+
+                        <label for="notes">
+                            Notizen
+                        </label>
+
+                        <textarea
+                            id="notes"
+                            name="notes"
+                            rows="4"
+                            placeholder="Optional"
+                        ></textarea>
+
+
+                        <button
+                            type="submit"
+                            class="primary-button"
+                        >
+                            + Pflanze hinzufügen
+                        </button>
+
+                    </form>
+
+
+                    {% else %}
+
+                    <div class="info-message">
+
+                        <p>
+                            Du musst zuerst einen
+                            Gartenbereich anlegen.
+                        </p>
+
+                        <a
+                            href="/garden"
+                            class="primary-link"
+                        >
+                            Gartenbereich anlegen
+                        </a>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+{% endblock %}

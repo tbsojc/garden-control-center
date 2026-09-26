@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<header class="page-header">
+
+    <div>
+        <h1>Dashboard</h1>
+        <p>Dein Garten auf einen Blick.</p>
+    </div>
+
+</header>
+
+<section class="dashboard-grid">
+
+    <a
+        href="/garden"
+        class="card dashboard-card"
+    >
+
+        <div class="card-icon">
+            🌱
+        </div>
+
+        <div>
+            <span class="card-label">
+                Gartenbereiche
+            </span>
+
+            <strong class="card-number">
+                {{ areas|length }}
+            </strong>
+        </div>
+
+    </a>
+
+    <a
+        href="/tasks"
+        class="card dashboard-card"
+    >
+
+        <div class="card-icon">
+            ✓
+        </div>
+
+        <div>
+            <span class="card-label">
+                Offene Aufgaben
+            </span>
+
+            <strong class="card-number">
+                {{ open_task_count }}
+            </strong>
+        </div>
+
+    </a>
+
+    <a
+        href="/plants"
+        class="card dashboard-card"
+    >
+
+        <div class="card-icon">
+            🌿
+        </div>
+
+        <div>
+            <span class="card-label">
+                Pflanzen
+            </span>
+
+            <strong class="card-number">
+                {{ plants|length }}
+            </strong>
+        </div>
+
+    </a>
+
+    <div class="card dashboard-card disabled-card">
+
+        <div class="card-icon">
+            🌤
+        </div>
+
+        <div>
+            <span class="card-label">
+                Wetter
+            </span>
+
+            <strong class="card-text">
+                Noch nicht verbunden
+            </strong>
+        </div>
+
+    </div>
+
+    <div class="card dashboard-card disabled-card">
+
+        <div class="card-icon">
+            💧
+        </div>
+
+        <div>
+            <span class="card-label">
+                Bewässerung
+            </span>
+
+            <strong class="card-text">
+                Noch nicht eingerichtet
+            </strong>
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

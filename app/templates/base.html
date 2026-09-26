@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>{{ app_name }}</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', path='/css/style.css') }}"
+    >
+
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">🌿</div>
+
+            <div>
+                <strong>Garden</strong>
+                <span>Control Center</span>
+            </div>
+        </div>
+
+        <nav>
+
+            <a
+                href="/"
+                class="{% if page == 'dashboard' %}active{% endif %}"
+            >
+                🏠 Dashboard
+            </a>
+
+            <a
+                href="/garden"
+                class="{% if page in ['garden', 'edit_garden_area'] %}active{% endif %}"
+            >
+                🌱 Garten
+            </a>
+
+            <a
+                href="/plants"
+                class="{% if page in ['plants', 'plant_analysis'] %}active{% endif %}"
+            >
+                🌿 Pflanzen
+            </a>
+
+            <a
+                href="/plant-library"
+                class="{% if page in ['plant_library', 'edit_plant_species'] %}active{% endif %}"
+            >
+                📚 Pflanzenwissen
+            </a>
+
+            <a
+                href="/tasks"
+                class="{% if page in ['tasks', 'edit_task'] %}active{% endif %}"
+            >
+                ✓ Aufgaben
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+            Version {{ version }}
+        </div>
+
+    </aside>
+
+    <main class="content">
+
+        {% block content %}{% endblock %}
+
+    </main>
+
+</div>
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>

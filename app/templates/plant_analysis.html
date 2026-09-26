@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+        <header class="page-header">
+
+            <div>
+                <h1>
+                    {{ plant.name }}
+
+                    {% if plant.variety %}
+                        · {{ plant.variety }}
+                    {% endif %}
+                </h1>
+
+                <p>
+                    Standortanalyse für diese Pflanze.
+                </p>
+            </div>
+
+        </header>
+
+
+        <a
+            href="/plants"
+            class="back-link"
+        >
+            ← Zurück zu Pflanzen
+        </a>
+
+
+        <div class="form-card">
+
+            <h2>Standort</h2>
+
+            <p>
+                📍 {{ plant.garden_area.name }}
+            </p>
+
+
+            {% if plant.species %}
+
+                <p>
+                    📚 Pflanzenwissen:
+                    {{ plant.species.name }}
+                </p>
+
+            {% endif %}
+
+
+            <h2 class="form-section-title">
+                Standortprüfung
+            </h2>
+
+
+            {% if analysis %}
+
+                {% for result in analysis.results %}
+
+                    <div class="analysis-result">
+
+                        <h3>
+
+                            {% if result.status == "good" %}
+                                ✓
+                            {% elif result.status == "warning" %}
+                                ⚠
+                            {% elif result.status == "bad" %}
+                                ✕
+                            {% else %}
+                                ?
+                            {% endif %}
+
+                            {{ result.title }}
+
+                        </h3>
+
+                        <p>
+                            {{ result.message }}
+                        </p>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty-state">
+
+                    <h3>
+                        Keine Analyse möglich
+                    </h3>
+
+                    <p>
+                        Dieser Pflanze ist noch kein Pflanzenwissen
+                        zugeordnet.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+{% endblock %}

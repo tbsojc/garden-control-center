@@ -1,0 +1,392 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+        <header class="page-header">
+
+            <div>
+                <h1>Mein Garten</h1>
+
+                <p>
+                    Verwalte die verschiedenen Bereiche
+                    deines Gartens.
+                </p>
+            </div>
+
+        </header>
+
+
+        <section class="two-column">
+
+
+            <!-- Vorhandene Bereiche -->
+
+            <div>
+
+                <h2>Gartenbereiche</h2>
+
+
+                {% if areas %}
+
+                <div class="area-list">
+
+                    {% for area in areas %}
+
+                    <article class="area-card">
+
+
+                        <div class="area-info">
+
+                            <span class="area-type">
+                                {{ area.area_type }}
+                            </span>
+
+                            <h3>
+                                {{ area.name }}
+                            </h3>
+
+                            {% if area.description %}
+                            <p>
+                                {{ area.description }}
+                            </p>
+                            {% endif %}
+
+
+                            <!-- Standortinformationen -->
+
+                            {% if area.area_size %}
+                            <p>
+                                📐 Fläche:
+                                {{ area.area_size }} m²
+                            </p>
+                            {% endif %}
+
+
+                            {% if area.light_condition %}
+                            <p>
+                                ☀️ Licht:
+
+                                {% if area.light_condition == "sonnig" %}
+                                    Sonnig
+                                {% elif area.light_condition == "sonnig_halbschattig" %}
+                                    Sonnig bis halbschattig
+                                {% elif area.light_condition == "halbschattig" %}
+                                    Halbschattig
+                                {% elif area.light_condition == "halbschattig_schattig" %}
+                                    Halbschattig bis schattig
+                                {% elif area.light_condition == "schattig" %}
+                                    Schattig
+                                {% else %}
+                                    {{ area.light_condition }}
+                                {% endif %}
+                            </p>
+                            {% endif %}
+
+
+                            {% if area.soil_type %}
+                            <p>
+                                🌍 Boden:
+                                {{ area.soil_type }}
+                            </p>
+                            {% endif %}
+
+
+                            {% if area.soil_ph is not none %}
+                            <p>
+                                🧪 Boden-pH:
+                                {{ area.soil_ph }}
+                            </p>
+                            {% endif %}
+
+
+                            {% if area.irrigation_zone %}
+                            <p>
+                                💧 Bewässerungszone:
+                                {{ area.irrigation_zone }}
+                            </p>
+                            {% endif %}
+
+
+                            <!-- Zugeordnete Pflanzen -->
+
+
+                            <!-- HIER NEU -->
+
+                            <div class="area-plants">
+
+                                <h4>
+                                    🌿 Zugeordnete Pflanzen
+                                </h4>
+
+                                {% if area.plants %}
+
+                                    <ul class="plant-list">
+
+                                        {% for plant in area.plants %}
+
+                                            <li class="plant-list-item">
+
+                                                <div class="plant-list-header">
+
+                                                    <strong>
+                                                        {{ plant.name }}
+                                                    </strong>
+
+                                                    {% if plant.variety %}
+                                                        · {{ plant.variety }}
+                                                    {% endif %}
+
+                                                    {% if plant.quantity > 1 %}
+                                                        <span>
+                                                            ({{ plant.quantity }}×)
+                                                        </span>
+                                                    {% endif %}
+
+                                                </div>
+
+
+                                                {% set plant_tasks = tasks_by_plant.get(plant.id, []) %}
+
+
+                                                {% if plant_tasks %}
+
+                                                    <ul class="plant-task-list">
+
+                                                        {% for task_info in plant_tasks %}
+
+                                                            <li class="plant-task">
+
+                                                                <span class="plant-task-title">
+                                                                    {{ task_info.task.title }}
+                                                                </span>
+
+
+                                                                {% if task_info.days_until_due < 0 %}
+
+                                                                    <span class="task-overdue">
+                                                                        seit
+                                                                        {{ -task_info.days_until_due }}
+                                                                        Tag{% if -task_info.days_until_due != 1 %}en{% endif %}
+                                                                        überfällig
+                                                                    </span>
+
+
+                                                                {% elif task_info.days_until_due == 0 %}
+
+                                                                    <span class="task-today">
+                                                                        heute fällig
+                                                                    </span>
+
+
+                                                                {% elif task_info.days_until_due == 1 %}
+
+                                                                    <span class="task-due">
+                                                                        morgen fällig
+                                                                    </span>
+
+
+                                                                {% else %}
+
+                                                                    <span class="task-due">
+                                                                        in {{ task_info.days_until_due }} Tagen
+                                                                    </span>
+
+                                                                {% endif %}
+
+                                                            </li>
+
+                                                        {% endfor %}
+
+                                                    </ul>
+
+
+                                                {% else %}
+
+                                                    <p class="muted-text">
+                                                        ✓ Keine offenen Aufgaben
+                                                    </p>
+
+                                                {% endif %}
+
+                                            </li>
+
+                                        {% endfor %}
+
+                                    </ul>
+
+                                {% else %}
+
+                                    <p class="muted-text">
+                                        Noch keine Pflanzen zugeordnet.
+                                    </p>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <a
+                            href="/garden/areas/{{ area.id }}/edit"
+                            class="secondary-button"
+                        >
+                            Bearbeiten
+                        </a>
+
+                        <!-- Löschen-Formular -->
+
+
+                        <form
+                            method="post"
+                            action="/garden/areas/{{ area.id }}/delete"
+                            onsubmit="return confirm('Bereich wirklich löschen?');"
+                        >
+
+                            <button
+                                type="submit"
+                                class="danger-button"
+                            >
+                                Löschen
+                            </button>
+
+                        </form>
+
+                    </article>
+
+                    {% endfor %}
+
+                </div>
+
+
+                {% else %}
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        🌱
+                    </div>
+
+                    <h3>
+                        Noch keine Gartenbereiche
+                    </h3>
+
+                    <p>
+                        Lege rechts deinen ersten
+                        Gartenbereich an.
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- Neuer Bereich -->
+
+            <div>
+
+                <div class="form-card">
+
+                    <h2>
+                        Bereich hinzufügen
+                    </h2>
+
+
+                    <form
+                        method="post"
+                        action="/garden/areas"
+                    >
+
+                        <label for="name">
+                            Name
+                        </label>
+
+                        <input
+                            id="name"
+                            name="name"
+                            type="text"
+                            placeholder="z. B. Hochbeet Süd"
+                            required
+                        >
+
+
+                        <label for="area_type">
+                            Typ
+                        </label>
+
+                        <select
+                            id="area_type"
+                            name="area_type"
+                            required
+                        >
+
+                            <option value="Beet">
+                                Beet
+                            </option>
+
+                            <option value="Hochbeet">
+                                Hochbeet
+                            </option>
+
+                            <option value="Rasen">
+                                Rasen
+                            </option>
+
+                            <option value="Gewächshaus">
+                                Gewächshaus
+                            </option>
+
+                            <option value="Obstgarten">
+                                Obstgarten
+                            </option>
+
+                            <option value="Hecke">
+                                Hecke
+                            </option>
+
+                            <option value="Terrasse">
+                                Terrasse
+                            </option>
+
+                            <option value="Teich">
+                                Teich
+                            </option>
+
+                            <option value="Sonstiges">
+                                Sonstiges
+                            </option>
+
+                        </select>
+
+
+                        <label for="description">
+                            Beschreibung
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            rows="4"
+                            placeholder="Optional"
+                        ></textarea>
+
+
+                        <button
+                            type="submit"
+                            class="primary-button"
+                        >
+                            + Bereich anlegen
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </section>
+
+{% endblock %}

@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<header class="page-header">
+
+            <div>
+                <h1>{{ area.name }} bearbeiten</h1>
+
+                <p>
+                    Standortdaten und Eigenschaften des Gartenbereichs.
+                </p>
+            </div>
+
+        </header>
+
+
+        <a
+            href="/garden"
+            class="back-link"
+        >
+            ← Zurück zum Garten
+        </a>
+
+
+        <form
+            method="post"
+            action="/garden/areas/{{ area.id }}/edit"
+            class="form-card"
+        >
+
+            <h2 class="form-section-title">
+                Grunddaten
+            </h2>
+
+
+            <div class="form-row">
+
+                <label>
+                    Name
+
+                    <input
+                        type="text"
+                        name="name"
+                        value="{{ area.name }}"
+                        required
+                    >
+                </label>
+
+
+                <label>
+                    Typ
+
+                    <select name="area_type">
+
+                        <option value="Beet"
+                            {% if area.area_type == "Beet" %}selected{% endif %}>
+                            Beet
+                        </option>
+
+                        <option value="Hochbeet"
+                            {% if area.area_type == "Hochbeet" %}selected{% endif %}>
+                            Hochbeet
+                        </option>
+
+                        <option value="Rasen"
+                            {% if area.area_type == "Rasen" %}selected{% endif %}>
+                            Rasen
+                        </option>
+
+                        <option value="Gewächshaus"
+                            {% if area.area_type == "Gewächshaus" %}selected{% endif %}>
+                            Gewächshaus
+                        </option>
+
+                        <option value="Obstgarten"
+                            {% if area.area_type == "Obstgarten" %}selected{% endif %}>
+                            Obstgarten
+                        </option>
+
+                        <option value="Hecke"
+                            {% if area.area_type == "Hecke" %}selected{% endif %}>
+                            Hecke
+                        </option>
+
+                        <option value="Terrasse"
+                            {% if area.area_type == "Terrasse" %}selected{% endif %}>
+                            Terrasse
+                        </option>
+
+                        <option value="Teich"
+                            {% if area.area_type == "Teich" %}selected{% endif %}>
+                            Teich
+                        </option>
+
+                        <option value="Sonstiges"
+                            {% if area.area_type == "Sonstiges" %}selected{% endif %}>
+                            Sonstiges
+                        </option>
+
+                    </select>
+
+                </label>
+
+            </div>
+
+
+            <h2 class="form-section-title">
+                Standort
+            </h2>
+
+
+            <div class="form-row">
+
+                <label>
+                    Fläche in m²
+
+                    <input
+                        type="number"
+                        name="area_size"
+                        min="0"
+                        step="0.1"
+                        value="{{ area.area_size if area.area_size is not none else '' }}"
+                    >
+                </label>
+
+
+                <label>
+                    Lichtverhältnisse
+
+                    <select name="light_condition">
+
+                        <option value="">
+                            Keine Angabe
+                        </option>
+
+                        <option value="sonnig"
+                            {% if area.light_condition == "sonnig" %}selected{% endif %}>
+                            Sonnig
+                        </option>
+
+                        <option value="sonnig_halbschattig"
+                            {% if area.light_condition == "sonnig_halbschattig" %}selected{% endif %}>
+                            Sonnig bis halbschattig
+                        </option>
+
+                        <option value="halbschattig"
+                            {% if area.light_condition == "halbschattig" %}selected{% endif %}>
+                            Halbschattig
+                        </option>
+
+                        <option value="halbschattig_schattig"
+                            {% if area.light_condition == "halbschattig_schattig" %}selected{% endif %}>
+                            Halbschattig bis schattig
+                        </option>
+
+                        <option value="schattig"
+                            {% if area.light_condition == "schattig" %}selected{% endif %}>
+                            Schattig
+                        </option>
+
+                    </select>
+
+                </label>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label>
+                    Bodenart
+
+                    <input
+                        type="text"
+                        name="soil_type"
+                        value="{{ area.soil_type or '' }}"
+                        placeholder="z. B. humos, sandig, lehmig"
+                    >
+                </label>
+
+
+                <label>
+                    Boden-pH
+
+                    <input
+                        type="number"
+                        name="soil_ph"
+                        min="0"
+                        max="14"
+                        step="0.1"
+                        value="{{ area.soil_ph if area.soil_ph is not none else '' }}"
+                    >
+                </label>
+
+            </div>
+
+
+            <h2 class="form-section-title">
+                Bewässerung
+            </h2>
+
+            <label>
+                Bewässerungszone
+
+                <input
+                    type="text"
+                    name="irrigation_zone"
+                    value="{{ area.irrigation_zone or '' }}"
+                    placeholder="z. B. Zone 1"
+                >
+            </label>
+
+
+            <h2 class="form-section-title">
+                Beschreibung
+            </h2>
+
+            <label>
+                Beschreibung
+
+                <textarea
+                    name="description"
+                    rows="5"
+                >{{ area.description or '' }}</textarea>
+            </label>
+
+
+            <button
+                type="submit"
+                class="primary-button"
+            >
+                Änderungen speichern
+            </button>
+
+        </form>
+
+{% endblock %}

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, Integer, String, Text
+from sqlalchemy import DateTime, Float, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -29,6 +29,39 @@ class GardenArea(Base):
         String(50),
         nullable=False,
     )
+
+    # -------------------------------------------------
+    # Standortdaten
+    # -------------------------------------------------
+
+    area_size: Mapped[float | None] = mapped_column(
+        Float,
+        nullable=True,
+    )
+
+    light_condition: Mapped[str | None] = mapped_column(
+        String(30),
+        nullable=True,
+    )
+
+    soil_type: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    soil_ph: Mapped[float | None] = mapped_column(
+        Float,
+        nullable=True,
+    )
+
+    irrigation_zone: Mapped[str | None] = mapped_column(
+        String(50),
+        nullable=True,
+    )
+
+    # -------------------------------------------------
+    # Beschreibung
+    # -------------------------------------------------
 
     description: Mapped[str | None] = mapped_column(
         Text,

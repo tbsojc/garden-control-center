@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<header class="page-header">
+
+            <div>
+                <h1>Aufgabe bearbeiten</h1>
+
+                <p>
+                    Aufgabe, Termin und Zuordnung bearbeiten.
+                </p>
+            </div>
+
+        </header>
+
+
+        <a
+            href="/tasks"
+            class="back-link"
+        >
+            ← Zurück zu Aufgaben
+        </a>
+
+
+        <form
+            method="post"
+            action="/tasks/{{ task.id }}/edit"
+            class="form-card"
+        >
+
+            <h2 class="form-section-title">
+                Aufgabe
+            </h2>
+
+
+            <label for="edit_task_title">
+                Aufgabe
+            </label>
+
+            <input
+                id="edit_task_title"
+                name="title"
+                type="text"
+                value="{{ task.title }}"
+                required
+            >
+
+
+            <label>
+                Ausführung
+            </label>
+
+            <select
+                id="edit_execution_type"
+                name="execution_type"
+            >
+
+                <option
+                    value="once"
+                    {% if task.execution_type == "once" %}selected{% endif %}
+                >
+                    Einmalig
+                </option>
+
+                <option
+                    value="recurring"
+                    {% if task.execution_type == "recurring" %}selected{% endif %}
+                >
+                    Regelmäßig
+                </option>
+
+                <option
+                    value="automation"
+                    {% if task.execution_type == "automation" %}selected{% endif %}
+                >
+                    Automatisierung
+                </option>
+
+            </select>
+
+
+            <div
+                id="edit-task-once-fields"
+                {% if task.execution_type != "once" %}
+                    style="display: none;"
+                {% endif %}
+            >
+
+                <label for="edit_task_due_date">
+                    Fällig am
+                </label>
+
+                <input
+                    id="edit_task_due_date"
+                    name="due_date"
+                    type="date"
+                    value="{% if task.due_date %}{{ task.due_date.isoformat() }}{% endif %}"
+                >
+
+            </div>
+
+
+            <div
+                id="edit-task-recurring-fields"
+                {% if task.execution_type != "recurring" %}
+                    style="display: none;"
+                {% endif %}
+            >
+
+                <h3 class="form-section-title">
+                    Wiederholung
+                </h3>
+
+                <label for="edit_interval_days">
+                    Intervall in Tagen
+                </label>
+
+                <input
+                    id="edit_interval_days"
+                    name="interval_days"
+                    type="number"
+                    min="1"
+                    value="{{ task.interval_days or '' }}"
+                >
+
+
+                <div class="form-row">
+
+                    <div>
+
+                        <label for="edit_start_month">
+                            Von Monat
+                        </label>
+
+                        <input
+                            id="edit_start_month"
+                            name="start_month"
+                            type="number"
+                            min="1"
+                            max="12"
+                            value="{{ task.start_month or '' }}"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="edit_end_month">
+                            Bis Monat
+                        </label>
+
+                        <input
+                            id="edit_end_month"
+                            name="end_month"
+                            type="number"
+                            min="1"
+                            max="12"
+                            value="{{ task.end_month or '' }}"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="edit-task-automation-fields"
+                {% if task.execution_type != "automation" %}
+                    style="display: none;"
+                {% endif %}
+                class="automation-placeholder"
+            >
+
+                <strong>
+                    ⚙ Automatisierung
+                </strong>
+
+                <p>
+                    Automatisierungsprogramme werden später
+                    an dieser Stelle auswählbar.
+                </p>
+
+            </div>
+
+
+            <h2 class="form-section-title">
+                Zuordnung
+            </h2>
+
+
+            <label for="edit_task_priority">
+                Priorität
+            </label>
+
+            <select
+                id="edit_task_priority"
+                name="priority"
+            >
+
+                <option
+                    value="niedrig"
+                    {% if task.priority == "niedrig" %}selected{% endif %}
+                >
+                    Niedrig
+                </option>
+
+                <option
+                    value="normal"
+                    {% if task.priority == "normal" %}selected{% endif %}
+                >
+                    Normal
+                </option>
+
+                <option
+                    value="hoch"
+                    {% if task.priority == "hoch" %}selected{% endif %}
+                >
+                    Hoch
+                </option>
+
+            </select>
+
+
+            <label for="edit_task_area">
+                Gartenbereich
+            </label>
+
+            <select
+                id="edit_task_area"
+                name="garden_area_id"
+            >
+
+                <option value="">
+                    Keine Zuordnung
+                </option>
+
+                {% for area in areas %}
+
+                <option
+                    value="{{ area.id }}"
+                    {% if task.garden_area_id == area.id %}selected{% endif %}
+                >
+                    {{ area.name }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <label for="edit_task_plant">
+                Pflanze
+            </label>
+
+            <select
+                id="edit_task_plant"
+                name="plant_id"
+            >
+
+                <option value="">
+                    Keine Zuordnung
+                </option>
+
+                {% for plant in plants %}
+
+                <option
+                    value="{{ plant.id }}"
+                    {% if task.plant_id == plant.id %}selected{% endif %}
+                >
+                    {{ plant.name }}
+
+                    {% if plant.variety %}
+                        – {{ plant.variety }}
+                    {% endif %}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <label for="edit_task_description">
+                Beschreibung
+            </label>
+
+            <textarea
+                id="edit_task_description"
+                name="description"
+                rows="5"
+            >{{ task.description or '' }}</textarea>
+
+
+            <button
+                type="submit"
+                class="primary-button"
+            >
+                Änderungen speichern
+            </button>
+
+        </form>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script src="{{ url_for('static', path='/js/tasks.js') }}"></script>
+
+{% endblock %}

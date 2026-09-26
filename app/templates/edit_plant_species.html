@@ -1,0 +1,377 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<header class="page-header">
+            <div>
+                <h1>{{ species.name }} bearbeiten</h1>
+                <p>
+                    Pflanzenwissen und technische Sollwerte bearbeiten.
+                </p>
+            </div>
+        </header>
+
+        <a href="/plant-library" class="back-link">
+            ← Zurück zum Pflanzenwissen
+        </a>
+
+        <form
+            method="post"
+            action="/plant-library/{{ species.id }}/edit"
+            class="form-card"
+        >
+
+            <h2 class="form-section-title">
+                Grunddaten
+            </h2>
+
+            <div class="form-row">
+
+                <label>
+                    Name
+
+                    <input
+                        type="text"
+                        name="name"
+                        value="{{ species.name }}"
+                        required
+                    >
+                </label>
+
+                <label>
+                    Kategorie
+
+                    <input
+                        type="text"
+                        name="category"
+                        value="{{ species.category }}"
+                        required
+                    >
+                </label>
+
+            </div>
+
+
+            <h2 class="form-section-title">
+                Pflegebedarf
+            </h2>
+
+            <div class="form-row">
+
+                <label>
+                    Wasserbedarf
+
+                    <select name="water_need">
+                        <option value="niedrig"
+                            {% if species.water_need == "niedrig" %}selected{% endif %}>
+                            niedrig
+                        </option>
+
+                        <option value="mittel"
+                            {% if species.water_need == "mittel" %}selected{% endif %}>
+                            mittel
+                        </option>
+
+                        <option value="hoch"
+                            {% if species.water_need == "hoch" %}selected{% endif %}>
+                            hoch
+                        </option>
+                    </select>
+                </label>
+
+                <label>
+                    Nährstoffbedarf
+
+                    <select name="nutrient_need">
+                        <option value="niedrig"
+                            {% if species.nutrient_need == "niedrig" %}selected{% endif %}>
+                            niedrig
+                        </option>
+
+                        <option value="mittel"
+                            {% if species.nutrient_need == "mittel" %}selected{% endif %}>
+                            mittel
+                        </option>
+
+                        <option value="hoch"
+                            {% if species.nutrient_need == "hoch" %}selected{% endif %}>
+                            hoch
+                        </option>
+                    </select>
+                </label>
+
+            </div>
+
+
+            <h2 class="form-section-title">
+                Standort
+            </h2>
+
+            <div class="form-row">
+
+                <label>
+                    Lichtbedarf
+
+                    <select name="light_requirement">
+
+                        <option value="">
+                            Keine Angabe
+                        </option>
+
+                        <option value="sonnig"
+                            {% if species.light_requirement == "sonnig" %}selected{% endif %}>
+                            Sonnig
+                        </option>
+
+                        <option value="sonnig_halbschattig"
+                            {% if species.light_requirement == "sonnig_halbschattig" %}selected{% endif %}>
+                            Sonnig bis halbschattig
+                        </option>
+
+                        <option value="halbschattig"
+                            {% if species.light_requirement == "halbschattig" %}selected{% endif %}>
+                            Halbschattig
+                        </option>
+
+                        <option value="halbschattig_schattig"
+                            {% if species.light_requirement == "halbschattig_schattig" %}selected{% endif %}>
+                            Halbschattig bis schattig
+                        </option>
+
+                        <option value="schattig"
+                            {% if species.light_requirement == "schattig" %}selected{% endif %}>
+                            Schattig
+                        </option>
+
+                    </select>
+                </label>
+
+                <label>
+                    Bodenart / Bodenanforderung
+
+                    <input
+                        type="text"
+                        name="soil_type"
+                        value="{{ species.soil_type or '' }}"
+                        placeholder="z. B. sauer, humos, durchlässig"
+                    >
+                </label>
+
+            </div>
+
+
+            <h2 class="form-section-title">
+                Bodenfeuchtigkeit
+            </h2>
+
+            <div class="form-row">
+
+                <label>
+                    Minimum %
+
+                    <input
+                        type="number"
+                        name="soil_moisture_min"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value="{{ species.soil_moisture_min if species.soil_moisture_min is not none else '' }}"
+                    >
+                </label>
+
+                <label>
+                    Maximum %
+
+                    <input
+                        type="number"
+                        name="soil_moisture_max"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value="{{ species.soil_moisture_max if species.soil_moisture_max is not none else '' }}"
+                    >
+                </label>
+
+            </div>
+
+
+            <h2 class="form-section-title">
+                pH-Bereich
+            </h2>
+
+            <div class="form-row">
+
+                <label>
+                    pH Minimum
+
+                    <input
+                        type="number"
+                        name="soil_ph_min"
+                        min="0"
+                        max="14"
+                        step="0.1"
+                        value="{{ species.soil_ph_min if species.soil_ph_min is not none else '' }}"
+                    >
+                </label>
+
+                <label>
+                    pH Maximum
+
+                    <input
+                        type="number"
+                        name="soil_ph_max"
+                        min="0"
+                        max="14"
+                        step="0.1"
+                        value="{{ species.soil_ph_max if species.soil_ph_max is not none else '' }}"
+                    >
+                </label>
+
+            </div>
+
+
+            <h2 class="form-section-title">
+                Saison
+            </h2>
+
+            <div class="form-row">
+
+                <label>
+                    Aussaat von
+
+                    <input
+                        type="number"
+                        name="sowing_start"
+                        min="1"
+                        max="12"
+                        value="{{ species.sowing_start or '' }}"
+                    >
+                </label>
+
+                <label>
+                    Aussaat bis
+
+                    <input
+                        type="number"
+                        name="sowing_end"
+                        min="1"
+                        max="12"
+                        value="{{ species.sowing_end or '' }}"
+                    >
+                </label>
+
+            </div>
+
+            <div class="form-row">
+
+                <label>
+                    Pflanzzeit von
+
+                    <input
+                        type="number"
+                        name="planting_start"
+                        min="1"
+                        max="12"
+                        value="{{ species.planting_start or '' }}"
+                    >
+                </label>
+
+                <label>
+                    Pflanzzeit bis
+
+                    <input
+                        type="number"
+                        name="planting_end"
+                        min="1"
+                        max="12"
+                        value="{{ species.planting_end or '' }}"
+                    >
+                </label>
+
+            </div>
+
+            <div class="form-row">
+
+                <label>
+                    Ernte von
+
+                    <input
+                        type="number"
+                        name="harvest_start"
+                        min="1"
+                        max="12"
+                        value="{{ species.harvest_start or '' }}"
+                    >
+                </label>
+
+                <label>
+                    Ernte bis
+
+                    <input
+                        type="number"
+                        name="harvest_end"
+                        min="1"
+                        max="12"
+                        value="{{ species.harvest_end or '' }}"
+                    >
+                </label>
+
+            </div>
+
+
+            <h2 class="form-section-title">
+                Empfindlichkeiten
+            </h2>
+
+            <label class="checkbox-label">
+                <input
+                    type="checkbox"
+                    name="frost_sensitive"
+                    {% if species.frost_sensitive %}checked{% endif %}
+                >
+                Frostempfindlich
+            </label>
+
+            <label class="checkbox-label">
+                <input
+                    type="checkbox"
+                    name="waterlogging_sensitive"
+                    {% if species.waterlogging_sensitive %}checked{% endif %}
+                >
+                Staunässeempfindlich
+            </label>
+
+            <label class="checkbox-label">
+                <input
+                    type="checkbox"
+                    name="lime_sensitive"
+                    {% if species.lime_sensitive %}checked{% endif %}
+                >
+                Kalkempfindlich
+            </label>
+
+
+            <h2 class="form-section-title">
+                Beschreibung
+            </h2>
+
+            <label>
+                Beschreibung
+
+                <textarea
+                    name="description"
+                    rows="5"
+                >{{ species.description or '' }}</textarea>
+            </label>
+
+
+            <button
+                type="submit"
+                class="primary-button"
+            >
+                Änderungen speichern
+            </button>
+
+        </form>
+
+{% endblock %}

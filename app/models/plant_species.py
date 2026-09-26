@@ -1,15 +1,15 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, DateTime, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, Float, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 
 
 if TYPE_CHECKING:
-    from app.models.plant import Plant
     from app.models.care_rule import CareRule
+    from app.models.plant import Plant
 
 
 class PlantSpecies(Base):
@@ -31,6 +31,10 @@ class PlantSpecies(Base):
         String(50),
         nullable=False,
     )
+
+    # -------------------------------------------------
+    # Saisonale Daten
+    # -------------------------------------------------
 
     sowing_start: Mapped[int | None] = mapped_column(
         Integer,
@@ -62,20 +66,93 @@ class PlantSpecies(Base):
         nullable=True,
     )
 
+    # -------------------------------------------------
+    # Allgemeiner Pflegebedarf
+    # -------------------------------------------------
+
     water_need: Mapped[str] = mapped_column(
         String(20),
         default="mittel",
+        nullable=False,
     )
 
     nutrient_need: Mapped[str] = mapped_column(
         String(20),
         default="mittel",
+        nullable=False,
     )
+
+    # -------------------------------------------------
+    # Standortanforderungen
+    # -------------------------------------------------
+
+    light_requirement: Mapped[str | None] = mapped_column(
+        String(30),
+        nullable=True,
+    )
+
+    soil_type: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    # -------------------------------------------------
+    # Bodenfeuchtigkeit
+    #
+    # Werte in Prozent.
+    # Diese Werte sind später Sollwerte für Sensorik
+    # und Bewässerungsentscheidungen.
+    # -------------------------------------------------
+
+    soil_moisture_min: Mapped[float | None] = mapped_column(
+        Float,
+        nullable=True,
+    )
+
+    soil_moisture_max: Mapped[float | None] = mapped_column(
+        Float,
+        nullable=True,
+    )
+
+    # -------------------------------------------------
+    # pH-Anforderungen
+    # -------------------------------------------------
+
+    soil_ph_min: Mapped[float | None] = mapped_column(
+        Float,
+        nullable=True,
+    )
+
+    soil_ph_max: Mapped[float | None] = mapped_column(
+        Float,
+        nullable=True,
+    )
+
+    # -------------------------------------------------
+    # Empfindlichkeiten
+    # -------------------------------------------------
 
     frost_sensitive: Mapped[bool] = mapped_column(
         Boolean,
         default=False,
+        nullable=False,
     )
+
+    waterlogging_sensitive: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False,
+    )
+
+    lime_sensitive: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False,
+    )
+
+    # -------------------------------------------------
+    # Beschreibung
+    # -------------------------------------------------
 
     description: Mapped[str | None] = mapped_column(
         Text,
@@ -87,11 +164,14 @@ class PlantSpecies(Base):
         default=datetime.now,
     )
 
+    # -------------------------------------------------
+    # Beziehungen
+    # -------------------------------------------------
+
     plants: Mapped[list["Plant"]] = relationship(
         back_populates="species",
     )
 
     care_rules: Mapped[list["CareRule"]] = relationship(
         back_populates="species",
-        cascade="all, delete-orphan",
     )

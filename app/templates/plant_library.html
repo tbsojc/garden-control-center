@@ -1,0 +1,507 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<header class="page-header">
+
+            <div>
+                <h1>Pflanzenwissen</h1>
+
+                <p>
+                    Pflege- und Saisoninformationen für
+                    deine Pflanzenarten.
+                </p>
+            </div>
+
+        </header>
+
+
+        <section class="two-column">
+
+
+            <div>
+
+                <h2>Pflanzenbibliothek</h2>
+
+
+                {% if species %}
+
+                <div class="area-list">
+
+                    {% for item in species %}
+
+                    <article class="area-card">
+
+                        <div class="area-info">
+
+                            <span class="area-type">
+                                {{ item.category }}
+                            </span>
+
+                            <h3>
+                                {{ item.name }}
+                            </h3>
+
+                            <p>
+                                💧 Wasser:
+                                {{ item.water_need }}
+                            </p>
+
+                            <p>
+                                🌱 Nährstoffe:
+                                {{ item.nutrient_need }}
+                            </p>
+
+
+                            {% if item.frost_sensitive %}
+
+                            <p>
+                                ❄️ Frostempfindlich
+                            </p>
+
+                            {% endif %}
+
+
+                            {% if item.sowing_start %}
+
+                            <p>
+                                Aussaat:
+                                Monat {{ item.sowing_start }}
+                                –
+                                {{ item.sowing_end }}
+                            </p>
+
+                            {% endif %}
+
+
+                            {% if item.planting_start %}
+
+                            <p>
+                                Pflanzzeit:
+                                Monat {{ item.planting_start }}
+                                –
+                                {{ item.planting_end }}
+                            </p>
+
+                            {% endif %}
+
+
+                            {% if item.harvest_start %}
+
+                            <p>
+                                Ernte:
+                                Monat {{ item.harvest_start }}
+                                –
+                                {{ item.harvest_end }}
+                            </p>
+
+                            {% endif %}
+
+
+                            {% if item.description %}
+
+                            <p>
+                                {{ item.description }}
+                            </p>
+
+                            {% endif %}
+
+                        </div>
+
+                        <a
+                            href="/plant-library/{{ item.id }}/edit"
+                            class="secondary-button"
+                        >
+                            Bearbeiten
+                        </a>
+
+
+                        <form
+                            method="post"
+                            action="/plant-library/{{ item.id }}/delete"
+                            onsubmit="return confirm('Pflanzenart wirklich löschen?');"
+                        >
+
+                            <button
+                                type="submit"
+                                class="danger-button"
+                            >
+                                Löschen
+                            </button>
+
+                        </form>
+
+                    </article>
+
+                    {% endfor %}
+
+                </div>
+
+
+                {% else %}
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        📚
+                    </div>
+
+                    <h3>
+                        Die Pflanzenbibliothek ist leer
+                    </h3>
+
+                    <p>
+                        Lege rechts die erste Pflanzenart an.
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <div>
+
+                <div class="form-card">
+
+                    <h2>
+                        Pflanzenart hinzufügen
+                    </h2>
+
+
+                    <form
+                        method="post"
+                        action="/plant-library"
+                    >
+
+                        <label>Name</label>
+
+                        <input
+                            name="name"
+                            type="text"
+                            placeholder="z. B. Tomate"
+                            required
+                        >
+
+
+                        <label>Kategorie</label>
+
+                        <select name="category">
+
+                            <option>Gemüse</option>
+                            <option>Obst</option>
+                            <option>Kräuter</option>
+                            <option>Staude</option>
+                            <option>Blume</option>
+                            <option>Baum</option>
+                            <option>Strauch</option>
+                            <option>Rasen</option>
+                            <option>Sonstiges</option>
+
+                        </select>
+
+
+                        <h3 class="form-section-title">
+                            Aussaat
+                        </h3>
+
+                        <div class="form-row">
+
+                            <div>
+                                <label>Von Monat</label>
+
+                                <input
+                                    name="sowing_start"
+                                    type="number"
+                                    min="1"
+                                    max="12"
+                                >
+                            </div>
+
+                            <div>
+                                <label>Bis Monat</label>
+
+                                <input
+                                    name="sowing_end"
+                                    type="number"
+                                    min="1"
+                                    max="12"
+                                >
+                            </div>
+
+                        </div>
+
+
+                        <h3 class="form-section-title">
+                            Pflanzzeit
+                        </h3>
+
+                        <div class="form-row">
+
+                            <div>
+                                <label>Von Monat</label>
+
+                                <input
+                                    name="planting_start"
+                                    type="number"
+                                    min="1"
+                                    max="12"
+                                >
+                            </div>
+
+                            <div>
+                                <label>Bis Monat</label>
+
+                                <input
+                                    name="planting_end"
+                                    type="number"
+                                    min="1"
+                                    max="12"
+                                >
+                            </div>
+
+                        </div>
+
+
+                        <h3 class="form-section-title">
+                            Ernte
+                        </h3>
+
+                        <div class="form-row">
+
+                            <div>
+                                <label>Von Monat</label>
+
+                                <input
+                                    name="harvest_start"
+                                    type="number"
+                                    min="1"
+                                    max="12"
+                                >
+                            </div>
+
+                            <div>
+                                <label>Bis Monat</label>
+
+                                <input
+                                    name="harvest_end"
+                                    type="number"
+                                    min="1"
+                                    max="12"
+                                >
+                            </div>
+
+                        </div>
+
+
+                        <label>Wasserbedarf</label>
+
+                        <select name="water_need">
+                            <option value="niedrig">Niedrig</option>
+                            <option value="mittel" selected>Mittel</option>
+                            <option value="hoch">Hoch</option>
+                        </select>
+
+
+                        <label>Nährstoffbedarf</label>
+
+                        <select name="nutrient_need">
+                            <option value="niedrig">Niedrig</option>
+                            <option value="mittel" selected>Mittel</option>
+                            <option value="hoch">Hoch</option>
+                        </select>
+
+                        <h3 class="form-section-title">
+                            Standort
+                        </h3>
+
+                        <label>
+                            Lichtbedarf
+                        </label>
+
+                        <select name="light_requirement">
+                            <option value="">
+                                Keine Angabe
+                            </option>
+
+                            <option value="sonnig">
+                                Sonnig
+                            </option>
+
+                            <option value="sonnig_halbschattig">
+                                Sonnig bis halbschattig
+                            </option>
+
+                            <option value="halbschattig">
+                                Halbschattig
+                            </option>
+
+                            <option value="halbschattig_schattig">
+                                Halbschattig bis schattig
+                            </option>
+
+                            <option value="schattig">
+                                Schattig
+                            </option>
+                        </select>
+
+
+                        <label>
+                            Bodenart / Bodenanforderung
+                        </label>
+
+                        <input
+                            type="text"
+                            name="soil_type"
+                            placeholder="z. B. sauer, humos, durchlässig"
+                        >
+
+
+                        <h3 class="form-section-title">
+                            Bodenfeuchtigkeit
+                        </h3>
+
+                        <div class="form-row">
+
+                            <div>
+                                <label>
+                                    Minimum %
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="soil_moisture_min"
+                                    min="0"
+                                    max="100"
+                                    step="0.1"
+                                    placeholder="z. B. 40"
+                                >
+                            </div>
+
+                            <div>
+                                <label>
+                                    Maximum %
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="soil_moisture_max"
+                                    min="0"
+                                    max="100"
+                                    step="0.1"
+                                    placeholder="z. B. 70"
+                                >
+                            </div>
+
+                        </div>
+
+
+                        <h3 class="form-section-title">
+                            pH-Bereich
+                        </h3>
+
+                        <div class="form-row">
+
+                            <div>
+                                <label>
+                                    pH Minimum
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="soil_ph_min"
+                                    min="0"
+                                    max="14"
+                                    step="0.1"
+                                    placeholder="z. B. 5.5"
+                                >
+                            </div>
+
+                            <div>
+                                <label>
+                                    pH Maximum
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="soil_ph_max"
+                                    min="0"
+                                    max="14"
+                                    step="0.1"
+                                    placeholder="z. B. 7.0"
+                                >
+                            </div>
+
+                        </div>
+
+
+                        <h3 class="form-section-title">
+                            Empfindlichkeiten
+                        </h3>
+
+                        <label class="checkbox-label">
+
+                            <input
+                                name="frost_sensitive"
+                                type="checkbox"
+                                value="true"
+                            >
+
+                            Frostempfindlich
+
+                        </label>
+
+                        <label class="checkbox-label">
+
+                            <input
+                                name="waterlogging_sensitive"
+                                type="checkbox"
+                                value="true"
+                            >
+
+                            Staunässeempfindlich
+
+                        </label>
+
+
+                        <label class="checkbox-label">
+
+                            <input
+                                name="lime_sensitive"
+                                type="checkbox"
+                                value="true"
+                            >
+
+                            Kalkempfindlich
+
+                        </label>
+
+
+                        <label>Beschreibung</label>
+
+                        <textarea
+                            name="description"
+                            rows="4"
+                            placeholder="Pflegehinweise, Besonderheiten ..."
+                        ></textarea>
+
+
+                        <button
+                            type="submit"
+                            class="primary-button"
+                        >
+                            + Pflanzenart hinzufügen
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+{% endblock %}

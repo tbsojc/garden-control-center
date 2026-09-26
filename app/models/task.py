@@ -18,7 +18,6 @@ from app.database import Base
 if TYPE_CHECKING:
     from app.models.garden_area import GardenArea
     from app.models.plant import Plant
-    from app.models.care_rule import CareRule
 
 
 class Task(Base):
@@ -40,10 +39,53 @@ class Task(Base):
         nullable=True,
     )
 
-    due_date: Mapped[date] = mapped_column(
-        Date,
+    # --------------------------------------------------
+    # Ausführungsart
+    # once | recurring | automation
+    # --------------------------------------------------
+
+    execution_type: Mapped[str] = mapped_column(
+        String(20),
+        default="once",
         nullable=False,
     )
+
+    # --------------------------------------------------
+    # Einmalige Aufgabe
+    # --------------------------------------------------
+
+    due_date: Mapped[date | None] = mapped_column(
+        Date,
+        nullable=True,
+    )
+
+    # --------------------------------------------------
+    # Regelmäßige Aufgabe
+    # --------------------------------------------------
+
+    interval_days: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+
+    start_month: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+
+    end_month: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+
+    last_completed_at: Mapped[date | None] = mapped_column(
+        Date,
+        nullable=True,
+    )
+
+    # --------------------------------------------------
+    # Allgemein
+    # --------------------------------------------------
 
     priority: Mapped[str] = mapped_column(
         String(20),
@@ -62,12 +104,6 @@ class Task(Base):
         nullable=True,
     )
 
-    source: Mapped[str] = mapped_column(
-        String(20),
-        default="manual",
-        nullable=False,
-    )
-
     garden_area_id: Mapped[int | None] = mapped_column(
         ForeignKey("garden_areas.id"),
         nullable=True,
@@ -75,11 +111,6 @@ class Task(Base):
 
     plant_id: Mapped[int | None] = mapped_column(
         ForeignKey("plants.id"),
-        nullable=True,
-    )
-
-    care_rule_id: Mapped[int | None] = mapped_column(
-        ForeignKey("care_rules.id"),
         nullable=True,
     )
 
@@ -91,5 +122,3 @@ class Task(Base):
     garden_area: Mapped["GardenArea | None"] = relationship()
 
     plant: Mapped["Plant | None"] = relationship()
-
-    care_rule: Mapped["CareRule | None"] = relationship()

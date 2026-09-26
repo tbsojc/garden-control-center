@@ -52,7 +52,6 @@ class CareRule(Base):
 
     priority: Mapped[str] = mapped_column(
         String(20),
-        default="normal",
         nullable=False,
     )
 
@@ -64,6 +63,7 @@ class CareRule(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         default=datetime.now,
+        nullable=False,
     )
 
     species: Mapped["PlantSpecies"] = relationship(
