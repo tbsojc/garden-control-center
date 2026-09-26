@@ -23,3 +23,5 @@ Thumbs.db
 *.db-wal
 *.db-journal
 
+# Lokale Datenbank-Backups
+data/garden_backup_*.db
