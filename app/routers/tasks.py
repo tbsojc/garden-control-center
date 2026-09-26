@@ -9,7 +9,10 @@ from sqlalchemy.orm import Session
 from app.config import APP_NAME, APP_VERSION
 from app.database import get_db
 from app.models import GardenArea, Plant, Task
-from app.services.task_schedule import get_next_due_date
+from app.services.task_schedule import (
+    get_due_status,
+    get_next_due_date,
+)
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -100,48 +103,10 @@ async def tasks(
 
         task_due_dates[task.id] = due_date
 
-        if due_date is None:
-            task_due_status[task.id] = None
-            continue
-
-        days_until_due = (
-            due_date - today
-        ).days
-
-        if days_until_due < 0:
-            overdue_days = abs(days_until_due)
-
-            if overdue_days == 1:
-                label = "1 Tag überfällig"
-            else:
-                label = f"{overdue_days} Tage überfällig"
-
-            task_due_status[task.id] = {
-                "status": "overdue",
-                "label": label,
-                "days": days_until_due,
-            }
-
-        elif days_until_due == 0:
-            task_due_status[task.id] = {
-                "status": "today",
-                "label": "Heute fällig",
-                "days": 0,
-            }
-
-        elif days_until_due == 1:
-            task_due_status[task.id] = {
-                "status": "tomorrow",
-                "label": "Morgen fällig",
-                "days": 1,
-            }
-
-        else:
-            task_due_status[task.id] = {
-                "status": "upcoming",
-                "label": f"In {days_until_due} Tagen",
-                "days": days_until_due,
-            }
+        task_due_status[task.id] = get_due_status(
+            due_date,
+            today=today,
+        )
 
     all_tasks.sort(
         key=lambda task: (

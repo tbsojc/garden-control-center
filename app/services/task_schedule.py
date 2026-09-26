@@ -129,3 +129,167 @@ def get_next_due_date(
         task,
         candidate,
     )
+
+def get_task_dates_for_month(
+    task: Task,
+    year: int,
+    month: int,
+    today: date | None = None,
+) -> list[date]:
+    """
+    Liefert alle Termine einer Aufgabe innerhalb eines Monats.
+    """
+
+    if today is None:
+        today = date.today()
+
+    month_start = date(year, month, 1)
+
+    if month == 12:
+        next_month_start = date(year + 1, 1, 1)
+    else:
+        next_month_start = date(year, month + 1, 1)
+
+    month_end = next_month_start - timedelta(days=1)
+
+    # ----------------------------------------------
+    # Einmalig
+    # ----------------------------------------------
+
+    if task.execution_type == "once":
+
+        if task.completed:
+            return []
+
+        if task.due_date is None:
+            return []
+
+        if month_start <= task.due_date <= month_end:
+            return [task.due_date]
+
+        return []
+
+    # ----------------------------------------------
+    # Automatisierung
+    # Noch keine echte Kalenderlogik
+    # ----------------------------------------------
+
+    if task.execution_type == "automation":
+        return []
+
+    # ----------------------------------------------
+    # Regelmäßig
+    # ----------------------------------------------
+
+    if task.execution_type != "recurring":
+        return []
+
+    if not task.interval_days:
+        return []
+
+    # Noch nie erledigt:
+    # Rhythmus beginnt am ersten aktiven Tag ab heute.
+    if task.last_completed_at is None:
+        current = next_active_date(
+            task,
+            max(today, month_start),
+        )
+
+    else:
+        current = next_active_date(
+            task,
+            task.last_completed_at
+            + timedelta(days=task.interval_days),
+        )
+
+        # Liegt der nächste Termin vor dem gewünschten Monat,
+        # den Rhythmus bis zum Monat weiterführen.
+        while current < month_start:
+            candidate = (
+                current
+                + timedelta(days=task.interval_days)
+            )
+
+            current = next_active_date(
+                task,
+                candidate,
+            )
+
+    dates = []
+
+    # Alle Termine innerhalb des gewünschten Monats sammeln.
+    while current <= month_end:
+
+        if current >= month_start:
+            dates.append(current)
+
+        candidate = (
+            current
+            + timedelta(days=task.interval_days)
+        )
+
+        next_date = next_active_date(
+            task,
+            candidate,
+        )
+
+        # Sicherheitsabbruch gegen Endlosschleifen.
+        if next_date <= current:
+            break
+
+        current = next_date
+
+    return dates
+
+
+def get_due_status(
+    due_date: date | None,
+    today: date | None = None,
+) -> dict | None:
+    """
+    Liefert den Fälligkeitsstatus für ein Datum.
+    """
+
+    if due_date is None:
+        return None
+
+    if today is None:
+        today = date.today()
+
+    days_until_due = (
+        due_date - today
+    ).days
+
+    if days_until_due < 0:
+        overdue_days = abs(days_until_due)
+
+        if overdue_days == 1:
+            label = "1 Tag überfällig"
+        else:
+            label = f"{overdue_days} Tage überfällig"
+
+        return {
+            "status": "overdue",
+            "label": label,
+            "days": days_until_due,
+        }
+
+    if days_until_due == 0:
+        return {
+            "status": "today",
+            "label": "Heute fällig",
+            "days": 0,
+        }
+
+    if days_until_due == 1:
+        return {
+            "status": "tomorrow",
+            "label": "Morgen fällig",
+            "days": 1,
+        }
+
+    return {
+        "status": "upcoming",
+        "label": f"In {days_until_due} Tagen",
+        "days": days_until_due,
+    }

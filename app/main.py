@@ -4,7 +4,15 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from app.config import APP_NAME, APP_VERSION
-from app.routers import dashboard, garden, plant_library, plants, tasks
+from app.routers import (
+    calendar,
+    dashboard,
+    garden,
+    plant_library,
+    plants,
+    tasks,
+    weather
+)
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -25,7 +33,8 @@ app.include_router(garden.router)
 app.include_router(plants.router)
 app.include_router(plant_library.router)
 app.include_router(tasks.router)
-
+app.include_router(calendar.router)
+app.include_router(weather.router)
 
 # --------------------------------------------------
 # Static Files

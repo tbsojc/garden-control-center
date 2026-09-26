@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>Kalender</h1>
+        <p>
+            Aufgaben und Termine im Garten.
+        </p>
+    </div>
+</div>
+
+<div class="calendar-navigation">
+
+    <a
+        href="/calendar?year={{ previous_year }}&month={{ previous_month }}"
+        class="button secondary"
+    >
+        ← Vorheriger Monat
+    </a>
+
+    <div class="calendar-title">
+        <h2>{{ month_name }} {{ year }}</h2>
+    </div>
+
+    <a
+        href="/calendar?year={{ next_year }}&month={{ next_month }}"
+        class="button secondary"
+    >
+        Nächster Monat →
+    </a>
+
+</div>
+
+<div class="calendar-today-navigation">
+    <a href="/calendar" class="button secondary">
+        Heute
+    </a>
+</div>
+
+<div class="calendar-grid">
+
+    <div class="calendar-weekday">Mo</div>
+    <div class="calendar-weekday">Di</div>
+    <div class="calendar-weekday">Mi</div>
+    <div class="calendar-weekday">Do</div>
+    <div class="calendar-weekday">Fr</div>
+    <div class="calendar-weekday">Sa</div>
+    <div class="calendar-weekday">So</div>
+
+    {% for week in weeks %}
+        {% for day in week %}
+
+            <div
+                class="calendar-day
+                    {% if day.month != month %} calendar-day-outside{% endif %}
+                    {% if day == today %} calendar-day-today{% endif %}
+                "
+            >
+                <div class="calendar-day-number">
+                    {{ day.day }}
+                </div>
+
+                {% set weather = weather_by_date.get(day) %}
+
+                {% if weather %}
+                    <div
+                        class="calendar-weather"
+                        title="{{ weather.label }}"
+                    >
+                        <span class="calendar-weather-main">
+                            {{ weather.icon }}
+                            {{ weather.temperature_min | round | int }}–{{ weather.temperature_max | round | int }} °C
+                        </span>
+
+                        {% if weather.precipitation_probability is not none %}
+                            <span class="calendar-weather-rain">
+                                💧 {{ weather.precipitation_probability }} %
+                            </span>
+                        {% endif %}
+
+                        {% for warning in weather.warnings %}
+                            <span
+                                class="calendar-weather-warning calendar-weather-warning-{{ warning.level }}"
+                            >
+                                {{ warning.icon }} {{ warning.label }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="calendar-day-tasks">
+
+                  {% for task in tasks_by_date.get(day, []) %}
+
+                    <a
+                        href="/tasks/{{ task.id }}/edit"
+                        class="calendar-task calendar-task-{{ task.priority }}"
+                        title="{{ task.title }}"
+                    >
+                        <span class="calendar-task-title">
+                            {{ task.title }}
+                        </span>
+
+                        {% if task.plant %}
+                            <span class="calendar-task-context">
+                                {{ task.plant.name }}
+                            </span>
+                        {% elif task.garden_area %}
+                            <span class="calendar-task-context">
+                                {{ task.garden_area.name }}
+                            </span>
+                        {% endif %}
+
+                        {% set due_status = task_status_by_date.get((day, task.id)) %}
+
+                        {% if due_status %}
+                            <span class="calendar-task-status calendar-task-status-{{ due_status.status }}">
+                                {{ due_status.label }}
+                            </span>
+                        {% endif %}
+                    </a>
+
+                  {% endfor %}
+
+              </div>
+            </div>
+
+        {% endfor %}
+    {% endfor %}
+
+</div>
+
+{% endblock %}

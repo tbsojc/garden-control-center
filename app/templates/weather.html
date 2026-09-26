@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>Wetter</h1>
+        <p>
+            Wettervorhersage für {{ location_name }}
+        </p>
+    </div>
+</div>
+
+{% if weather_days %}
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Wetter</th>
+                <th>Min.</th>
+                <th>Max.</th>
+                <th>Regen</th>
+                <th>Wahrscheinlichkeit</th>
+                <th>Code</th>
+                <th>Warnungen</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for weather in weather_days %}
+                <tr>
+                    <td>
+                        {{ weather.date.strftime("%d.%m.%Y") }}
+                    </td>
+
+                    <td>
+                        {{ weather.icon }}
+                        {{ weather.label }}
+                    </td>
+
+                    <td>
+                        {{ weather.temperature_min }} °C
+                    </td>
+
+                    <td>
+                        {{ weather.temperature_max }} °C
+                    </td>
+
+                    <td>
+                        {{ weather.precipitation }} mm
+                    </td>
+
+                    <td>
+                        {% if weather.precipitation_probability is not none %}
+                            {{ weather.precipitation_probability }} %
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ weather.weather_code }}
+                    </td>
+
+                    <td>
+                        {% if weather.warnings %}
+                            {% for warning in weather.warnings %}
+                                <div>
+                                    {{ warning.icon }}
+                                    {{ warning.label }}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+
+<div class="card">
+    <p>
+        Aktuell konnten keine Wetterdaten geladen werden.
+    </p>
+</div>
+
+{% endif %}
+
+{% endblock %}

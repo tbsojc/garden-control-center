@@ -76,10 +76,17 @@
 
     </a>
 
-    <div class="card dashboard-card disabled-card">
+    <a
+        href="/weather"
+        class="card dashboard-card"
+    >
 
         <div class="card-icon">
-            🌤
+            {% if weather_today %}
+                {{ weather_today.icon }}
+            {% else %}
+                🌤️
+            {% endif %}
         </div>
 
         <div>
@@ -87,12 +94,34 @@
                 Wetter
             </span>
 
-            <strong class="card-text">
-                Noch nicht verbunden
-            </strong>
+            {% if weather_today %}
+                <strong class="card-text">
+                    {{ weather_today.temperature_min | round | int }}–{{ weather_today.temperature_max | round | int }} °C
+                </strong>
+
+                <span class="card-label">
+                    {{ weather_today.label }}
+                </span>
+
+                {% if weather_today.precipitation_probability is not none %}
+                    <span class="card-label">
+                        💧 {{ weather_today.precipitation_probability }} %
+                    </span>
+                {% endif %}
+
+                {% for warning in weather_today.warnings %}
+                    <span class="card-label">
+                        {{ warning.icon }} {{ warning.label }}
+                    </span>
+                {% endfor %}
+            {% else %}
+                <strong class="card-text">
+                    Keine Wetterdaten
+                </strong>
+            {% endif %}
         </div>
 
-    </div>
+    </a>
 
     <div class="card dashboard-card disabled-card">
 

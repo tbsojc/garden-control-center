@@ -845,3 +845,172 @@ button {
     font-size: 0.85rem;
     opacity: 0.7;
 }
+
+/* --------------------------------------------------
+   Kalender
+-------------------------------------------------- */
+
+.calendar-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.calendar-title h2 {
+    margin: 0;
+}
+
+.calendar-today-navigation {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+}
+
+.calendar-weekday {
+    padding: 0.75rem;
+    text-align: center;
+    font-weight: 600;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+.calendar-day {
+    min-height: 120px;
+    padding: 0.5rem;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+.calendar-day-number {
+    font-weight: 600;
+}
+
+.calendar-day-outside {
+    opacity: 0.4;
+}
+
+.calendar-day-today {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+}
+
+.calendar-day-tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.calendar-task {
+    display: block;
+    padding: 0.3rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    line-height: 1.2;
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.calendar-task:hover {
+    text-decoration: underline;
+}
+
+.calendar-task-high {
+    font-weight: 700;
+}
+
+.calendar-task-normal {
+    font-weight: 500;
+}
+
+.calendar-task-low {
+    opacity: 0.75;
+}
+
+.calendar-task-title {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.calendar-task-context {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.7rem;
+    font-weight: 400;
+    opacity: 0.75;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.calendar-task-status {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+}
+
+.calendar-task-status-overdue {
+    font-weight: 700;
+}
+
+.calendar-task-status-today {
+    font-weight: 700;
+}
+
+.calendar-task-status-tomorrow {
+    font-weight: 600;
+}
+
+.calendar-task-status-upcoming {
+    opacity: 0.7;
+}
+
+.calendar-weather {
+    margin-top: 0.25rem;
+    margin-bottom: 0.4rem;
+    font-size: 0.75rem;
+    line-height: 1.3;
+}
+
+.calendar-weather-main {
+    display: block;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.calendar-weather-rain {
+    display: block;
+    margin-top: 0.1rem;
+    font-size: 0.7rem;
+    opacity: 0.7;
+}
+
+
+.calendar-weather-warning {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.calendar-weather-warning-warning {
+    opacity: 0.85;
+}
+
+.calendar-weather-warning-danger {
+    font-weight: 700;
+}
